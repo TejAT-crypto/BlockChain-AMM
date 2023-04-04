@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "./DExPair.sol";
-import "./IDExPair.sol";
+// import "./IPair.sol";
 
 contract Factory {
     error SameAddresses();
