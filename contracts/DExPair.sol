@@ -22,6 +22,14 @@ contract DExPair is ERC20, Math {
 
     constructor() ERC20("DEx Pair", "SWD", 18){}
 
+    function init(address token0_, address token1_) public {
+        if (tokenA != address(0) || tokenB != address(0))
+            require(tokenA == address(0) && tokenB == address(0), "Pair Already exists");
+
+        tokenA = token0_;
+        tokenB = token1_;
+    }
+
     /* Burn Function allows users to burn their 
     liquidity tokens and receive their share of 
     tokenA and tokenB in exchange*/
