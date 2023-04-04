@@ -3,7 +3,7 @@ pragma solidity ^0.8.10;
 
 import "./library/Math.sol";
 import "./library/float.sol";
-// import "./interface/IDExTrade.sol";
+import "./interfaces/ITrade.sol";
 import "https://github.com/transmissions11/solmate/blob/main/src/tokens/ERC20.sol";
 
 contract DExPair is ERC20, Math {
@@ -100,7 +100,7 @@ contract DExPair is ERC20, Math {
 
     event Swap(address indexed sender, uint256 Amount_A, uint256 Amount_B, address indexed to);
 
-    function swap(uint256 Amount_A, uint256 Amount_B, address to) public {
+    function swap(uint256 Amount_A, uint256 Amount_B, address to, bytes calldata data) public {
         
         uint256 Deposit_A; 
         uint256 Deposit_B; 
@@ -142,7 +142,8 @@ contract DExPair is ERC20, Math {
 
         if (Amount_A > 0) _safeTransfer(tokenA, to, Amount_A);
         if (Amount_B > 0) _safeTransfer(tokenB, to, Amount_B);
-
+        if (data.length > 0)
+            ITrade(to).swapCall(msg.sender, Amount_A, Amount_B, data);
         emit Swap(msg.sender, Amount_A, Amount_B, to);
     }
 
