@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
-import "./interfaces/IFactory.sol";
-import "./interfaces/IPair.sol";
+import "../interfaces/IFactory.sol";
+import "../interfaces/IPair.sol";
 import {DExPair} from "./DExPair.sol";
 
 library Library {
