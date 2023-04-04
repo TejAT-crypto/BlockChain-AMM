@@ -1,0 +1,18 @@
+{
+  "name": "blockchain-amm",
+  "version": "1.0.0",
+  "description": "This repository consists of 3 steps:\r 1. Replicating the V2 of UniSWAP\r 2. Replicating the V3 of UniSWAP\r 3. Introducing the native currency using ERC20 Tokens instead of ERC721 Tokens foe any transaction.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "hardhat": "^2.13.0"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.8.2",
+    "solmate": "^6.7.0"
+  }
+}

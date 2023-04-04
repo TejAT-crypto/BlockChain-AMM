@@ -15,13 +15,13 @@ library Library {
         address tokenA,
         address tokenB
     ) public returns (uint256 reserveA, uint256 reserveB) {
-        (address token0, address token1) = sortTokens(tokenA, tokenB);
-        (uint256 reserve0, uint256 reserve1) = IPair(
-            pairFor(factoryAddress, token0, token1)
-        ).getReserves();
-        (reserveA, reserveB) = tokenA == token0
-            ? (reserve0, reserve1)
-            : (reserve1, reserve0);
+        (address token_A, address token_B) = sortTokens(tokenA, tokenB);
+        (uint256 reserve_A, uint256 reserve_B,) = IPair(
+            pairFor(factoryAddress, token_A, token_B)
+        ).showReserve();
+        (reserveA, reserveB) = tokenA == token_A
+            ? (reserve_A, reserve_B)
+            : (reserve_B, reserve_A);
     }
 
     function quote(
@@ -32,13 +32,13 @@ library Library {
         if (amountIn == 0) revert InsufficientAmount();
         if (reserveIn == 0 || reserveOut == 0) revert InsufficientLiquidity();
 
-        return (amountIn * reserveOut) / reserveIn; //atla e atlu to atla e ketlu evu
+        return (amountIn * reserveOut) / reserveIn;
     }
 
     function sortTokens(
         address tokenA,
         address tokenB
-    ) internal pure returns (address token0, address token1) {
+    ) internal pure returns (address token_A, address token_B) {
         return tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
     }
 
@@ -47,7 +47,7 @@ library Library {
         address tokenA,
         address tokenB
     ) internal pure returns (address pairAddress) {
-        (address token0, address token1) = sortTokens(tokenA, tokenB);
+        (address token_A, address token_B) = sortTokens(tokenA, tokenB);
         pairAddress = address(
             uint160(
                 uint256(
@@ -55,8 +55,8 @@ library Library {
                         abi.encodePacked(
                             hex"ff",
                             factoryAddress,
-                            keccak256(abi.encodePacked(token0, token1)),
-                            keccak256(type(ZuniswapV2Pair).creationCode)
+                            keccak256(abi.encodePacked(token_A, token_B)),
+                            keccak256(type(DExPair).creationCode)
                         )
                     )
                 )
@@ -89,12 +89,12 @@ library Library {
         amounts[0] = amountIn;
 
         for (uint256 i; i < path.length - 1; i++) {
-            (uint256 reserve0, uint256 reserve1) = getReserves(
+            (uint256 reserve_A, uint256 reserve_B) = getReserves(
                 factory,
                 path[i],
                 path[i + 1]
             );
-            amounts[i + 1] = getAmountOut(amounts[i], reserve0, reserve1);
+            amounts[i + 1] = getAmountOut(amounts[i], reserve_A, reserve_B);
         }
 
         return amounts;
@@ -124,12 +124,12 @@ library Library {
         amounts[amounts.length - 1] = amountOut;
 
         for (uint256 i = path.length - 1; i > 0; i--) {
-            (uint256 reserve0, uint256 reserve1) = getReserves(
+            (uint256 reserve_A, uint256 reserve_B) = getReserves(
                 factory,
                 path[i - 1],
                 path[i]
             );
-            amounts[i - 1] = getAmountIn(amounts[i], reserve0, reserve1);
+            amounts[i - 1] = getAmountIn(amounts[i], reserve_A, reserve_B);
         }
 
         return amounts;

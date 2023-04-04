@@ -4,7 +4,7 @@ pragma solidity ^0.8.10;
 import "./library/Math.sol";
 import "./library/float.sol";
 import "./interfaces/ITrade.sol";
-import "https://github.com/transmissions11/solmate/blob/main/src/tokens/ERC20.sol";
+import "./node_modules/solmate/src/tokens/ERC20.sol";
 
 contract DExPair is ERC20, Math {
     using float for uint224;

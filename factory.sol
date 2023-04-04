@@ -10,8 +10,8 @@ contract Factory {
     error ZeroAddress();
 
     event CreatedPair(
-        address indexed token0,
-        address indexed token1,
+        address indexed token_A,
+        address indexed token_B,
         address pair,
         uint256
     );
@@ -23,33 +23,33 @@ contract Factory {
         if(tokenA == tokenB){
             revert SameAddresses();
         }
-        address token0;
-        address token1;
+        address token_A;
+        address token_B;
         if(tokenA < tokenB){
-            token0 = tokenA;
-            token1 = tokenB;
+            token_A = tokenA;
+            token_B = tokenB;
         }
         else{
-            token0 = tokenB;
-            token1 = tokenA;
+            token_A = tokenB;
+            token_B = tokenA;
         }
-        if(token0 == address(0)){
+        if(token_A == address(0)){
             revert ZeroAddress();
         }
-        if(newPairs[token0][token1] != address(0)){
+        if(newPairs[token_A][token_B] != address(0)){
             revert PairExist();
         }
         bytes memory ByteCode = type(DExPair).creationCode;
-        bytes32 salt = keccak256(abi.encodePacked(token0, token1));
+        bytes32 salt = keccak256(abi.encodePacked(token_A, token_B));
         assembly{
             pair := create2(0, add(ByteCode, 32), mload(ByteCode), salt)
         }
-        IDExPair(pair).init(token0, token1);
+        IPair(pair).init(token_A, token_B);
 
-        newPairs[token0][token1] = pair;
-        newPairs[token1][token0] = pair;
+        newPairs[token_A][token_B] = pair;
+        newPairs[token_B][token_A] = pair;
         allPair.push(pair);
 
-        emit CreatedPair(token0, token1, pair, allPair.length);
+        emit CreatedPair(token_A, token_B, pair, allPair.length);
     }
 }
