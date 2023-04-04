@@ -2,9 +2,9 @@
 
 pragma solidity ^0.8.10;
 
-//import "Factory.sol";
-//import "SwapPair.sol";
-//import "Library.sol";
+import "Factory.sol";
+import "SwapPair.sol";
+import "Library.sol";
 
 
 contract Router{
@@ -144,7 +144,7 @@ contract Router{
             ).swap(amt0Out, amt1Out, to, "");
         }
     }
-    fucntion _calculateLiquidity(
+    function _calculateLiquidity(
         address A,
         address B,
         uint256 amtAdesired,
@@ -193,7 +193,7 @@ contract Router{
         address from,
         uint256 value
     ) private{
-        bool success, bytes memory data) = token.call(
+        (bool success, bytes memory data) = token.call(
             abi.encodeWithSignature(
                 "transferfrom(address, adress, uint256)",
                 from, 
