@@ -14,5 +14,16 @@
   "dependencies": {
     "@openzeppelin/contracts": "^4.8.2",
     "solmate": "^6.7.0"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TejAT-crypto/BlockChain-AMM.git"
+  },
+  "bugs": {
+    "url": "https://github.com/TejAT-crypto/BlockChain-AMM/issues"
+  },
+  "homepage": "https://github.com/TejAT-crypto/BlockChain-AMM#readme"
 }
