@@ -19,8 +19,8 @@ contract Router is IRouter {
 
     using SafeERC20 for IERC20;
 
-    address public immutable override factory;
-    address public immutable override WETH;
+    address public immutable factory;
+    address public immutable WETH;
 
     modifier ensure(uint256 deadline) {
         if (deadline < block.timestamp)
@@ -86,7 +86,6 @@ contract Router is IRouter {
         uint256 deadline
     )
         external
-        override
         ensure(deadline)
         returns (uint256 amtA, uint256 amtB, uint256 liq)
     {
@@ -114,7 +113,6 @@ contract Router is IRouter {
     )
         external
         payable
-        override
         ensure(deadline)
         returns (uint256 amtToken, uint256 amtETH, uint256 liq)
     {
@@ -143,7 +141,7 @@ contract Router is IRouter {
         uint256 amtBmin,
         address to,
         uint256 deadline
-    ) public override ensure(deadline) returns (uint256 amtA, uint256 amtB) {
+    ) public ensure(deadline) returns (uint256 amtA, uint256 amtB) {
         address pair = Library.pairFor(factory, tokenA, tokenB);
         IERC20(pair).transferFrom(msg.sender, pair, liq);
         (uint256 amt0, uint256 amt1) = IPair(pair).burn(to);
@@ -161,12 +159,7 @@ contract Router is IRouter {
         address amtTokenmin,
         address to,
         uint256 deadline
-    )
-        external
-        override
-        ensure(deadline)
-        returns (uint256 amtToken, uint256 amtETH)
-    {
+    ) external ensure(deadline) returns (uint256 amtToken, uint256 amtETH) {
         (amtToken, amtETH) = removeLiquidity(
             token,
             WETH,
@@ -193,7 +186,7 @@ contract Router is IRouter {
         uint8 v,
         bytes32 r,
         bytes32 s
-    ) external override returns (uint256 amtA, uint256 amtB) {
+    ) external returns (uint256 amtA, uint256 amtB) {
         address pair = Library.pairFor(factory, tokenA, tokenB);
         uint256 value = appMax ? type(uint256).max : liq;
         IERC20(pair).permit(
@@ -228,7 +221,7 @@ contract Router is IRouter {
         uint8 v,
         bytes32 r,
         bytes32 s
-    ) external override returns (uint256 amtToken, uint256 amtETH) {
+    ) external returns (uint256 amtToken, uint256 amtETH) {
         address pair = Library.pairFor(factory, token, WETH);
         uint256 value = appMax ? type(uint256).max : liq;
         IERC20(pair).permit(
@@ -280,7 +273,7 @@ contract Router is IRouter {
         address[] calldata path,
         address to,
         uint256 deadline
-    ) external override ensure(deadline) returns (uint256[] memory amounts) {
+    ) external ensure(deadline) returns (uint256[] memory amounts) {
         amounts = Library.getAmountsOut(factory, amtIn, path);
         if (amounts[amounts.length - 1] < amtOutMin)
             revert InsufficientOutputAmount(
@@ -301,7 +294,7 @@ contract Router is IRouter {
         address[] calldata path,
         address to,
         uint256 deadline
-    ) external override ensure(deadline) returns (uint256[] memory amounts) {
+    ) external ensure(deadline) returns (uint256[] memory amounts) {
         amounts = Library.getAmountsIn(factory, amtOut, path);
         if (amounts[0] > amtInmax)
             revert ExcessiveInputAmount(amounts[0], amtInmax);
@@ -318,13 +311,7 @@ contract Router is IRouter {
         address[] calldata path,
         address to,
         uint256 deadline
-    )
-        external
-        payable
-        override
-        ensure(deadline)
-        returns (uint256[] memory amounts)
-    {
+    ) external payable ensure(deadline) returns (uint256[] memory amounts) {
         if (path[0] != WETH) revert RouterInvalidPath(path[0], WETH);
         amounts = Library.getAmountsOut(factory, msg.value, path);
         if (amounts[amounts.length - 1] < amtOutmin)
@@ -349,7 +336,7 @@ contract Router is IRouter {
         address[] calldata path,
         address to,
         uint256 deadline
-    ) external override ensure(deadline) returns (uint256[] memory amounts) {
+    ) external ensure(deadline) returns (uint256[] memory amounts) {
         if (path[path.length - 1] != WETH)
             revert RouterInvalidPath(path[path.length - 1], WETH);
         amounts = Library.getAmountsIn(factory, amtOut, path);
@@ -370,13 +357,7 @@ contract Router is IRouter {
         address[] calldata path,
         address to,
         uint256 deadline
-    )
-        external
-        payable
-        override
-        ensure(deadline)
-        returns (uint256[] memory amounts)
-    {
+    ) external payable ensure(deadline) returns (uint256[] memory amounts) {
         if (path[0] != WETH) revert RouterInvalidPath(path[0], WETH);
         amounts = Library.getAmountsIn(factory, amtOut, path);
         if (amounts[0] <= msg.value)
@@ -398,7 +379,7 @@ contract Router is IRouter {
         uint256 amtA,
         uint256 reserveA,
         uint256 reserveB
-    ) public pure override returns (uint256 amtB) {
+    ) public pure returns (uint256 amtB) {
         return Library.quote(amtA, reserveA, reserveB);
     }
 
@@ -406,7 +387,7 @@ contract Router is IRouter {
         uint256 amtIn,
         uint256 reserveIn,
         uint256 reserveOut
-    ) public pure override returns (uint256 amtOut) {
+    ) public pure returns (uint256 amtOut) {
         return Library.getAmountOut(amtIn, reserveIn, reserveOut);
     }
 
@@ -414,21 +395,21 @@ contract Router is IRouter {
         uint256 amtOut,
         uint256 reserveIn,
         uint256 reserveOut
-    ) public pure override returns (uint256 amtIn) {
+    ) public pure returns (uint256 amtIn) {
         return Library.getAmountOut(amtOut, reserveIn, reserveOut);
     }
 
     function getAmountsOut(
         uint256 amtIn,
         address[] memory path
-    ) public view override returns (uint256[] memory amounts) {
+    ) public view returns (uint256[] memory amounts) {
         return Library.getAmountsOut(factory, amtIn, path);
     }
 
     function getAmountsIn(
         uint256 amtOut,
         address[] memory path
-    ) public view override returns (uint256[] memory amounts) {
+    ) public view returns (uint256[] memory amounts) {
         return Library.getAmountsIn(factory, amtOut, path);
     }
 }
