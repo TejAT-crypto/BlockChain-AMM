@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
-contract Math {
+library Math {
     function min(uint256 a, uint256 b) internal pure returns (uint256) {
         if (a < b) return a;
         else return b;

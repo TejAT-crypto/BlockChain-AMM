@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "./DExPair.sol";
 import "../interfaces/IFactory.sol";
 
-contract Factory is IFactory{
+contract Factory is IFactory {
     error SameAddresses();
     error PairExist();
     error ZeroAddress();
@@ -16,32 +16,34 @@ contract Factory is IFactory{
     mapping(address => mapping(address => address)) public newPairs;
     address[] public allPair;
 
-    constructor(address feeToSetter){
+    constructor(address feeToSetter) {
         feesToSetter = feeToSetter;
     }
 
-    function allPairLength() external view returns (unint256){
+    function allPairLength() external view returns (uint256) {
         return allPair.length;
     }
 
-    function createPairs(address tokenA, address tokenB) external returns (address pair){
-        if(tokenA == tokenB){
+    function createPairs(
+        address tokenA,
+        address tokenB
+    ) external returns (address pair) {
+        if (tokenA == tokenB) {
             revert SameAddresses();
         }
         address token_A;
         address token_B;
-        if(tokenA < tokenB){
+        if (tokenA < tokenB) {
             token_A = tokenA;
             token_B = tokenB;
-        }
-        else{
+        } else {
             token_A = tokenB;
             token_B = tokenA;
         }
-        if(token_A == address(0)){
+        if (token_A == address(0)) {
             revert ZeroAddress();
         }
-        if(newPairs[token_A][token_B] != address(0)){
+        if (newPairs[token_A][token_B] != address(0)) {
             revert PairExist();
         }
         //bytes memory ByteCode = type(DExPair).creationCode;
@@ -62,14 +64,14 @@ contract Factory is IFactory{
     }
 
     function _setFeesTo(address _feesTo) external {
-        if(msg.sender != feesToSetter){
+        if (msg.sender != feesToSetter) {
             revert IsForbidden(msg.sender, feesToSetter);
         }
         feesTo = _feesTo;
     }
 
     function _setFeesToSetter(address _feesToSetter) external {
-        if(msg.sender != feesToSetter){
+        if (msg.sender != feesToSetter) {
             revert IsForbidden(msg.sender, feesToSetter);
         }
         feesToSetter = _feesToSetter;

@@ -20,32 +20,14 @@ interface IPair {
     );
     event Sync(uint256 reserveA, uint256 reserveB);
 
-    function MINIMUM_LIQUIDITY() external pure returns (uint256);
-
-    function factory() external view returns (address);
-
-    function tokenA() external view returns (address);
-
-    function tokenB() external view returns (address);
-
-    function init(address, address) external;
-
-    function showReserve()
+    function getreserves()
         external
         view
         returns (uint112 reserveA, uint112 reserveB, uint32 blockTime);
 
-    function LastPrice_A() external view returns (uint256);
-
-    function LastPrice_B() external view returns (uint256);
-
-    function prod() external view returns (uint256 liquidity);
-
     function mint(address) external returns (uint256);
 
     function burn(address) external returns (uint256 amountA, uint256 amountB);
-
-    function transferFrom(address, address, uint256) external returns (bool);
 
     function swap(
         uint256 amountA,
@@ -58,5 +40,5 @@ interface IPair {
 
     function sync() external;
 
-    function initialize(address, address) external;
+    function init(address, address) external;
 }

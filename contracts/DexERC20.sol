@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.17;
 
-import "../interfaces/IERC20.sol";
+import "../interfaces/IDERC20.sol";
 import "../node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract DexERC20 is IERC20, ERC20 {
+contract DexERC20 is IDERC20, ERC20 {
     error EXPIRED(uint256 deadline, uint256 blockTimestamp);
     error InvalidSignature(address recoveredAddress, address owner);
-    bytes32 public override DOMAIN_SEPARATOR;
+    bytes32 public DOMAIN_SEPARATOR;
     // keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
-    bytes32 public constant override PERMIT_TYPEHASH =
+    bytes32 public constant PERMIT_TYPEHASH =
         0x6e71edae12b1b97f4d1f60370fef10105fa2faae0126114a169c64845d6126c9;
-    mapping(address => uint256) public override nonces;
+    mapping(address => uint256) public nonces;
 
     constructor() ERC20("DEx", "DEX") {
         uint256 chainId;
@@ -39,7 +39,7 @@ contract DexERC20 is IERC20, ERC20 {
         uint8 v,
         bytes32 r,
         bytes32 s
-    ) external override {
+    ) external {
         if (deadline < block.timestamp)
             revert EXPIRED(deadline, block.timestamp);
         bytes32 digest = keccak256(

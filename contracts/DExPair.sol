@@ -7,10 +7,12 @@ import "../interfaces/ITrade.sol";
 import "../interfaces/IPair.sol";
 import "../interfaces/IFactory.sol";
 import "../contracts/DexERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "../node_modules/@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-contract DExPair is DexERC20, IPair, Math {
+contract DExPair is DexERC20, IPair {
     using float for uint224;
+    using SafeERC20 for IERC20;
+    using Math for uint256;
 
     error ValidFactory(address sender, address factory);
     error Balance_overflow();
@@ -53,14 +55,14 @@ contract DExPair is DexERC20, IPair, Math {
 
     function burn(
         address trader
-    ) external returns (uint256 amountOfA, uint256 amountOfB) {
-        (uint112 reserveA_, uint112 reserveB_, ) = showReserve();
+    ) external override returns (uint256 amountOfA, uint256 amountOfB) {
+        (uint112 reserveA_, uint112 reserveB_, ) = getreserves();
 
         address tknA = tokenA;
         address tknB = tokenB;
         uint256 bal_A = IERC20(tokenA).balanceOf(address(this));
         uint256 bal_B = IERC20(tokenB).balanceOf(address(this));
-        uint256 liquidity = balanceOf[address(this)];
+        uint256 liquidity = balanceOf(address(this));
 
         bool isFee = _mintFee(reserveA_, reserveB_);
         uint256 _totsupply = totalSupply();
@@ -71,8 +73,8 @@ contract DExPair is DexERC20, IPair, Math {
 
         _burn(address(this), liquidity);
 
-        IERC20(tokenA).safeTransfer(trader, amountOfA);
-        IERC20(tokenB).safeTransfer(trader, amountOfB);
+        IERC20(tknA).safeTransfer(trader, amountOfA);
+        IERC20(tknB).safeTransfer(trader, amountOfB);
 
         bal_A = IERC20(tknA).balanceOf(address(this));
         bal_B = IERC20(tknB).balanceOf(address(this));
@@ -86,8 +88,10 @@ contract DExPair is DexERC20, IPair, Math {
     liquidity tokens by depositing 
     tokenA and tokenB */
 
-    function mint(address trader) external returns (uint256 liquidity) {
-        (uint112 reserveA_, uint112 reserveB_, ) = showReserve();
+    function mint(
+        address trader
+    ) external override returns (uint256 liquidity) {
+        (uint112 reserveA_, uint112 reserveB_, ) = getreserves();
         uint256 bal_A = IERC20(tokenA).balanceOf(address(this));
         uint256 bal_B = IERC20(tokenB).balanceOf(address(this));
         uint256 amountOfA = bal_A - reserveA_;
@@ -117,7 +121,7 @@ contract DExPair is DexERC20, IPair, Math {
     /* Sync function syncs the current reserves 
     of tokenA and tokenB in the contract*/
 
-    function sync() external {
+    function sync() external override {
         _update(
             IERC20(tokenA).balanceOf(address(this)),
             IERC20(tokenB).balanceOf(address(this)),
@@ -135,13 +139,13 @@ contract DExPair is DexERC20, IPair, Math {
         uint256 Amount_B,
         address to,
         bytes calldata data
-    ) external {
+    ) external override {
         uint256 bal_A;
         uint256 bal_B;
 
         if (Amount_A == 0 && Amount_B == 0) revert Invalid_outputs();
 
-        (uint112 reserveA_, uint112 reserveB_, ) = showReserve();
+        (uint112 reserveA_, uint112 reserveB_, ) = getreserves();
 
         if (Amount_A > reserveA_ || Amount_B > reserveB_)
             revert Insuf_liquidity();
@@ -182,7 +186,7 @@ contract DExPair is DexERC20, IPair, Math {
         emit Swap(msg.sender, A_in, B_in, Amount_A, Amount_B, to);
     }
 
-    function skim(address to) external {
+    function skim(address to) external override {
         address tknA = tokenA;
         address tknB = tokenB;
         IERC20(tknA).safeTransfer(
@@ -229,7 +233,7 @@ contract DExPair is DexERC20, IPair, Math {
         uint112 reserveA_,
         uint112 reserveB_
     ) private returns (bool isFee) {
-        address feeTo = IFactory(factory).feeTo();
+        address feeTo = IFactory(factory).feesTo();
         isFee = feeTo != address(0);
         uint256 product = prod; // gas savings
         if (isFee) {
@@ -248,12 +252,13 @@ contract DExPair is DexERC20, IPair, Math {
         }
     }
 
-    function showReserve() public view returns (uint112, uint112, uint32) {
-        return (reserveA_, reserveB_, blockTime_);
-        {
-            reserveA_ = reserveA;
-            reserveB_ = reserveB;
-            blockTime_ = blockTime;
-        }
+    function getreserves()
+        public
+        view
+        returns (uint112 reserveA_, uint112 reserveB_, uint32 blockTimest)
+    {
+        reserveA_ = reserveA;
+        reserveB_ = reserveB;
+        blockTimest = blockTime;
     }
 }

@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "../node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../node_modules/@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "../interfaces/IFactory.sol";
-import "../interfaces/IERC20.sol";
+import "../interfaces/IDERC20.sol";
 import "../contracts/Library.sol";
 import "../interfaces/IRouter.sol";
 import "../interfaces/IWETH.sol";
@@ -23,7 +23,7 @@ contract Router is IRouter {
     address public immutable override WETH;
 
     modifier ensure(uint256 deadline) {
-        if (deadline < blockTimestamp)
+        if (deadline < block.timestamp)
             revert RouterExpired(deadline, block.timestamp);
         _;
     }
@@ -48,7 +48,7 @@ contract Router is IRouter {
         if (IFactory(factory).getPair(tokenA, tokenB) == address(0)) {
             IFactory(factory).createPair(tokenA, tokenB);
         }
-        (uint256 reserveA, uint256 reserveB) = UniswapV2Library.getReserves(
+        (uint256 reserveA, uint256 reserveB) = Library.getReserves(
             factory,
             tokenA,
             tokenB
@@ -56,7 +56,7 @@ contract Router is IRouter {
         if (reserveA == 0 && reserveB == 0) {
             (amtA, amtB) = (amtAdesired, amtBdesired);
         } else {
-            uint256 amtBopt = Library.quote(amtAdesireed, reserveA, reserveB);
+            uint256 amtBopt = Library.quote(amtAdesired, reserveA, reserveB);
             if (amtBopt <= amtBdesired) {
                 if (amtBopt < amtBmin)
                     revert InsufficientBAmount(amtBopt, amtBmin);
@@ -146,7 +146,7 @@ contract Router is IRouter {
     ) public override ensure(deadline) returns (uint256 amtA, uint256 amtB) {
         address pair = Library.pairFor(factory, tokenA, tokenB);
         IERC20(pair).transferFrom(msg.sender, pair, liq);
-        (uint256 amt0, uint256 amt1) = Pair(pair).burn(to);
+        (uint256 amt0, uint256 amt1) = IPair(pair).burn(to);
         (address token0, ) = Library.sortTokens(tokenA, tokenB);
         (amtA, amtB) = tokenA == token0 ? (amt0, amt1) : (amt1, amt0);
 
@@ -265,7 +265,7 @@ contract Router is IRouter {
             address to = i < path.length - 2
                 ? Library.pairFor(factory, out, path[i + 2])
                 : _to;
-            Pair(Library.pairFor(factory, inp, out)).swap(
+            IPair(Library.pairFor(factory, inp, out)).swap(
                 amt0Out,
                 amt1Out,
                 to,
