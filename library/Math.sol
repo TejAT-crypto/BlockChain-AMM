@@ -3,7 +3,7 @@ pragma solidity ^0.8.10;
 
 contract Math {
     function min(uint256 a, uint256 b) internal pure returns (uint256) {
-        if(a<b) return a;
+        if (a < b) return a;
         else return b;
     }
 
@@ -15,9 +15,20 @@ contract Math {
                 z = x;
                 x = (y / x + x) / 2;
             }
-        } 
-        else if (y != 0) {
+        } else if (y != 0) {
             z = 1;
         }
+    }
+
+    function add(uint x, uint y) internal pure returns (uint z) {
+        require((z = x + y) >= x, "OVERFLOW");
+    }
+
+    function sub(uint x, uint y) internal pure returns (uint z) {
+        require((z = x - y) <= x, "UNDERFLOW");
+    }
+
+    function mul(uint x, uint y) internal pure returns (uint z) {
+        require(y == 0 || (z = x * y) / y == x, "OVERFLOW");
     }
 }
