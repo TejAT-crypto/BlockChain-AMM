@@ -7,7 +7,7 @@ import "../interfaces/ITrade.sol";
 import "../interfaces/IPair.sol";
 import "../interfaces/IFactory.sol";
 import "../contracts/DexERC20.sol";
-import "../node_modules/@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 contract DExPair is DexERC20, IPair, Math {
     using float for uint224;
