@@ -9,19 +9,19 @@ import "../interfaces/IFactory.sol";
 import "../contracts/DexERC20.sol";
 import "../node_modules/@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-error ValidFactory(address sender, address factory);
-error Balance_overflow();
-error Insuf_liquidity();
-error Liquidity_burn();
-error Liquidity_mint();
-error Invalid_Inputs();
-error Invalid_outputs();
-error Operation_invalid();
-error Invalid_Address(address to);
-error Initialised();
-
 contract DExPair is DexERC20, IPair, Math {
     using float for uint224;
+
+    error ValidFactory(address sender, address factory);
+    error Balance_overflow();
+    error Insuf_liquidity();
+    error Liquidity_burn();
+    error Liquidity_mint();
+    error Invalid_Inputs();
+    error Invalid_outputs();
+    error Operation_invalid();
+    error Invalid_Address(address to);
+    error Initialised();
 
     uint112 private reserveA;
     uint112 private reserveB;
@@ -118,12 +118,11 @@ contract DExPair is DexERC20, IPair, Math {
     of tokenA and tokenB in the contract*/
 
     function sync() external {
-        (uint112 reserveA_, uint112 reserveB_, ) = showReserve();
         _update(
             IERC20(tokenA).balanceOf(address(this)),
             IERC20(tokenB).balanceOf(address(this)),
-            reserveA_,
-            reserveB_
+            reserveA,
+            reserveB
         );
     }
 
@@ -183,6 +182,19 @@ contract DExPair is DexERC20, IPair, Math {
         emit Swap(msg.sender, A_in, B_in, Amount_A, Amount_B, to);
     }
 
+    function skim(address to) external {
+        address tknA = tokenA;
+        address tknB = tokenB;
+        IERC20(tknA).safeTransfer(
+            to,
+            IERC20(tknA).balanceOf(address(this)) - reserveA
+        );
+        IERC20(tknB).safeTransfer(
+            to,
+            IERC20(tknB).balanceOf(address(this)) - reserveB
+        );
+    }
+
     /*Private Functions*/ //////////////////////////////////////////////////////////
 
     function _update(
@@ -191,10 +203,8 @@ contract DExPair is DexERC20, IPair, Math {
         uint112 reserveA_,
         uint112 reserveB_
     ) private {
-        require(
-            bal_A <= type(uint112).max && bal_B <= type(uint112).max,
-            "uint112 overflow"
-        );
+        if (bal_A > type(uint112).max || bal_B > type(uint112).max)
+            revert Balance_overflow();
 
         unchecked {
             uint32 timeElapsed = uint32(block.timestamp) - blockTime;
@@ -215,17 +225,35 @@ contract DExPair is DexERC20, IPair, Math {
         emit Sync(reserveA, reserveB);
     }
 
-    function _safeTransfer(address token, address to, uint256 value) private {
-        (bool flag, bytes memory data) = token.call(
-            abi.encodeWithSignature("transfer(address,uint256)", to, value)
-        );
-        require(
-            flag && (data.length == 0 || abi.decode(data, (bool))),
-            "Trade failed. Aborting.."
-        );
+    function _mintFee(
+        uint112 reserveA_,
+        uint112 reserveB_
+    ) private returns (bool isFee) {
+        address feeTo = IFactory(factory).feeTo();
+        isFee = feeTo != address(0);
+        uint256 product = prod; // gas savings
+        if (isFee) {
+            if (product != 0) {
+                uint256 rootK = Math.sqrt(uint256(reserveA_) * (reserveB_));
+                uint256 rootKLast = Math.sqrt(product);
+                if (rootK > rootKLast) {
+                    uint256 num = totalSupply() * (rootK - rootKLast);
+                    uint256 den = (rootK * 5) + rootKLast;
+                    uint256 liquidity = num / den;
+                    if (liquidity > 0) _mint(feeTo, liquidity);
+                }
+            }
+        } else if (product != 0) {
+            prod = 0;
+        }
     }
 
     function showReserve() public view returns (uint112, uint112, uint32) {
-        return (reserveA, reserveB, blockTime);
+        return (reserveA_, reserveB_, blockTime_);
+        {
+            reserveA_ = reserveA;
+            reserveB_ = reserveB;
+            blockTime_ = blockTime;
+        }
     }
 }
