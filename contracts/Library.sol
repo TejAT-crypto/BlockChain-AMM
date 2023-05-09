@@ -13,17 +13,25 @@ library Library {
     error InvalidPath(address[] path);
     error FailedSendingEth(address recipient, uint256 amt);
 
-    function getReserves(address factoryAddress, address tokenA, address tokenB) internal view returns (uint256 reserveA, uint256 reserveB) {
+    function getReserves(
+        address factoryAddress,
+        address tokenA,
+        address tokenB
+    ) internal view returns (uint256 reserveA, uint256 reserveB) {
         (address token_A, ) = sortTokens(tokenA, tokenB);
-        (uint256 reserve_A, uint256 reserve_B,) = IPair(
+        (uint256 reserve_A, uint256 reserve_B, ) = IPair(
             pairFor(factoryAddress, tokenA, tokenB)
-        ).showReserve();
+        ).getreserves();
         (reserveA, reserveB) = tokenA == token_A
             ? (reserve_A, reserve_B)
             : (reserve_B, reserve_A);
     }
 
-    function quote(uint256 amountIn, uint256 reserveIn, uint256 reserveOut) public pure returns (uint256 amountOut) {
+    function quote(
+        uint256 amountIn,
+        uint256 reserveIn,
+        uint256 reserveOut
+    ) public pure returns (uint256 amountOut) {
         if (amountIn == 0) revert InsufficientAmount();
         if (reserveIn == 0 || reserveOut == 0) revert InsufficientLiquidity();
 
@@ -31,17 +39,26 @@ library Library {
     }
 
     // returns sorted token addresses, used to handle return values from pairs sorted in this order
-    function sortTokens(address tokenA,address tokenB) internal pure returns (address token_A, address token_B) {
-        if(tokenA == tokenB){
+    function sortTokens(
+        address tokenA,
+        address tokenB
+    ) internal pure returns (address token_A, address token_B) {
+        if (tokenA == tokenB) {
             revert SameAddresses(tokenA, tokenB);
         }
-        (token_A, token_B) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
-        if(token_A == address(0)){
+        (token_A, token_B) = tokenA < tokenB
+            ? (tokenA, tokenB)
+            : (tokenB, tokenA);
+        if (token_A == address(0)) {
             revert ZeroAddress();
         }
     }
 
-    function pairFor(address factoryAddress, address tokenA, address tokenB) internal pure returns (address pairAddress) {
+    function pairFor(
+        address factoryAddress,
+        address tokenA,
+        address tokenB
+    ) internal pure returns (address pairAddress) {
         (address token_A, address token_B) = sortTokens(tokenA, tokenB);
         pairAddress = address(
             uint160(
@@ -59,7 +76,11 @@ library Library {
         );
     }
 
-    function getAmountOut(uint256 amountIn, uint256 reserveIn, uint256 reserveOut) internal pure returns (uint256 amtOut) {
+    function getAmountOut(
+        uint256 amountIn,
+        uint256 reserveIn,
+        uint256 reserveOut
+    ) internal pure returns (uint256 amtOut) {
         if (amountIn == 0) revert InsufficientInputAmount();
         if (reserveIn == 0 || reserveOut == 0) revert InsufficientLiquidity();
 
@@ -67,44 +88,64 @@ library Library {
         uint256 numerator = amountInWithFee * reserveOut;
         uint256 denominator = (reserveIn * 1000) + amountInWithFee;
 
-        amtOut =  numerator / denominator;
+        amtOut = numerator / denominator;
     }
 
-    function getAmountsOut(address factory, uint256 amountIn, address[] memory path) internal view returns (uint256[] memory amts) {
+    function getAmountsOut(
+        address factory,
+        uint256 amountIn,
+        address[] memory path
+    ) internal view returns (uint256[] memory amts) {
         if (path.length < 2) revert InvalidPath(path);
         amts = new uint256[](path.length);
         amts[0] = amountIn;
 
         for (uint256 i; i < path.length - 1; i++) {
-            (uint256 reserve_A, uint256 reserve_B) = getReserves(factory, path[i], path[i + 1]);
+            (uint256 reserve_A, uint256 reserve_B) = getReserves(
+                factory,
+                path[i],
+                path[i + 1]
+            );
             amts[i + 1] = getAmountOut(amts[i], reserve_A, reserve_B);
         }
     }
 
-    function getAmountIn(uint256 amountOut, uint256 reserveIn, uint256 reserveOut) internal pure returns (uint256 amtIn) {
+    function getAmountIn(
+        uint256 amountOut,
+        uint256 reserveIn,
+        uint256 reserveOut
+    ) internal pure returns (uint256 amtIn) {
         if (amountOut == 0) revert InsufficientOutputAmount();
         if (reserveIn == 0 || reserveOut == 0) revert InsufficientLiquidity();
 
         uint256 numerator = reserveIn * amountOut * 1000;
         uint256 denominator = (reserveOut - amountOut) * 997;
 
-        amtIn =  (numerator / denominator) + 1;
+        amtIn = (numerator / denominator) + 1;
     }
 
-    function getAmountsIn(address factory, uint256 amountOut, address[] memory path) internal view returns (uint256[] memory amts) {
+    function getAmountsIn(
+        address factory,
+        uint256 amountOut,
+        address[] memory path
+    ) internal view returns (uint256[] memory amts) {
         if (path.length < 2) revert InvalidPath(path);
         amts = new uint256[](path.length);
         amts[amts.length - 1] = amountOut;
 
         for (uint256 i = path.length - 1; i > 0; i--) {
-            (uint256 reserve_A, uint256 reserve_B) = getReserves(factory, path[i - 1], path[i]);
+            (uint256 reserve_A, uint256 reserve_B) = getReserves(
+                factory,
+                path[i - 1],
+                path[i]
+            );
             amts[i - 1] = getAmountIn(amts[i], reserve_A, reserve_B);
         }
     }
 
-    function SafeTransferEth(address recipient, uint256 amount)  internal {
+    function SafeTransferEth(address recipient, uint256 amount) internal {
         (bool sent, ) = recipient.call{value: amount}("");
-        if(!sent){
+        if (!sent) {
             revert FailedSendingEth(recipient, amount);
         }
     }
