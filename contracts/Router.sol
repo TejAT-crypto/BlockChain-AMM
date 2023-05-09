@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "interfaces/IFactory.sol";
-import "interfaces/IERC20.sol";
-import "contracts/Library.sol";
-import "interfaces/IRouter.sol";
-import "interfaces/IWETH.sol";
+import "../node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "../node_modules/@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "../interfaces/IFactory.sol";
+import "../interfaces/IERC20.sol";
+import "../contracts/Library.sol";
+import "../interfaces/IRouter.sol";
+import "../interfaces/IWETH.sol";
 
 contract Router is IRouter {
     error RouterExpired(uint256 deadline, uint256 blockTimestamp);
