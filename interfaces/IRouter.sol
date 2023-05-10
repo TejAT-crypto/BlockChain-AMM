@@ -48,7 +48,7 @@ interface IRouter {
         uint256 deadline
     ) external returns (uint256 amountToken, uint256 amountETH);
 
-    function removeLiquidity_permit(
+    function removeLiquiditywpermit(
         address tokenA,
         address tokenB,
         uint256 liquidity,
@@ -62,7 +62,7 @@ interface IRouter {
         bytes32 s
     ) external returns (uint256 amountA, uint256 amountB);
 
-    function removeLiquidityETH_permit(
+    function removeLiquidityETHwpermit(
         address token,
         uint256 liquidity,
         uint256 amountTokenMin,

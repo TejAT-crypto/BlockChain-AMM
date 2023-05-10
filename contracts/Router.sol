@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "../node_modules/@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "../interfaces/IFactory.sol";
 import "../interfaces/IDERC20.sol";
 import "../contracts/Library.sol";
@@ -154,8 +154,9 @@ contract Router is IRouter {
 
     function removeLiquidityETH(
         address token,
-        address liq,
-        address amtTokenmin,
+        uint256 liq,
+        uint256 amtTokenmin,
+        uint256 amtETHmin,
         address to,
         uint256 deadline
     ) external ensure(deadline) returns (uint256 amtToken, uint256 amtETH) {
@@ -230,8 +231,7 @@ contract Router is IRouter {
             deadline,
             v,
             r,
-            s
-        );
+            s);
         (amtToken, amtETH) = removeLiquidityETH(
             token,
             liq,
@@ -287,7 +287,7 @@ contract Router is IRouter {
         swapGen(amounts, path, to);
     }
 
-    function swapTokensForET(
+    function swapTokensFET(
         uint256 amtOut,
         uint256 amtInmax,
         address[] calldata path,
@@ -305,7 +305,7 @@ contract Router is IRouter {
         swapGen(amounts, path, to);
     }
 
-    function swapEETHfortokens(
+    function swapExactETHFT(
         uint256 amtOutmin,
         address[] calldata path,
         address to,
@@ -351,7 +351,7 @@ contract Router is IRouter {
         Library.safeTransferETH(to, amounts[amounts.length - 1]);
     }
 
-    function swapETokensForETH(
+    function swapExactTokensForETH(
         uint256 amtIn,
         uint256 amtOutmin,
         address[] calldata path,
@@ -361,7 +361,7 @@ contract Router is IRouter {
         if (path[path.length - 1] != WETH)
             revert RouterInvalidPath(path[path.length - 1], WETH);
         amounts = Library.getAmountsOut(factory, amtIn, path);
-        if (amounts[amounts.length - 1] < amountOutMin)
+        if (amounts[amounts.length - 1] < amtOutmin)
             revert InsufficientOutputAmount(
                 amounts[amounts.length - 1],
                 amtOutmin
@@ -372,7 +372,7 @@ contract Router is IRouter {
             Library.pairFor(factory, path[0], path[1]),
             amounts[0]
         );
-        _swap(amounts, path, address(this));
+        swapGen(amounts, path, address(this));
         IWETH(WETH).withdraw(amounts[amounts.length - 1]);
         Library.safeTransferETH(to, amounts[amounts.length - 1]);
     }
