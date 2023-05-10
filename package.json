@@ -15,7 +15,7 @@
     "@types/mocha": "^9.1.0",
     "@types/node": "^20.1.1",
     "chai": "^4.3.7",
-    "hardhat": "^2.13.0",
+    "hardhat": "^2.14.0",
     "ts-node": "^10.9.1",
     "typechain": "^8.1.1",
     "typescript": "^5.0.4"

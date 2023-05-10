@@ -97,8 +97,8 @@ contract Router is IRouter {
             amtBmin
         );
         address pair = Library.pairFor(factory, tokenA, tokenB);
-        IERC20(tokenA).safeTransferFrom(msg.sender, pair, amtA);
-        IERC20(tokenB).safeTransferFrom(msg.sender, pair, amtB);
+        ERC20(tokenA).transferFrom(msg.sender, pair, amtA);
+        ERC20(tokenB).transferFrom(msg.sender, pair, amtB);
         liq = IPair(pair).mint(to);
     }
 
