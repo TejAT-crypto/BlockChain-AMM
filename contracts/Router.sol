@@ -175,7 +175,7 @@ contract Router is IRouter {
         Library.safeTransferETH(to, amtETH);
     }
 
-    function removeLiquiditywpermit(
+    function removeLiquidity_permit(
         address tokenA,
         address tokenB,
         uint256 liq,
@@ -211,7 +211,7 @@ contract Router is IRouter {
         );
     }
 
-    function removeLiquidityETHwpermit(
+    function removeLiquidityETH_permit(
         address token,
         uint256 liq,
         uint256 amtTokenmin,
@@ -289,7 +289,7 @@ contract Router is IRouter {
         swapGen(amounts, path, to);
     }
 
-    function swapTokensForET(
+    function swapTokensFET(
         uint256 amtOut,
         uint256 amtInmax,
         address[] calldata path,
@@ -307,7 +307,7 @@ contract Router is IRouter {
         swapGen(amounts, path, to);
     }
 
-    function swapExactETHfortokens(
+    function swapExactETHFT(
         uint256 amtOutmin,
         address[] calldata path,
         address to,

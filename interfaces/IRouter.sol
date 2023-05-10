@@ -48,7 +48,7 @@ interface IRouter {
         uint256 deadline
     ) external returns (uint256 amountToken, uint256 amountETH);
 
-    function removeLiquidityWithPermit(
+    function removeLiquidity_permit(
         address tokenA,
         address tokenB,
         uint256 liquidity,
@@ -62,7 +62,7 @@ interface IRouter {
         bytes32 s
     ) external returns (uint256 amountA, uint256 amountB);
 
-    function removeLiquidityETHWithPermit(
+    function removeLiquidityETH_permit(
         address token,
         uint256 liquidity,
         uint256 amountTokenMin,
@@ -75,7 +75,7 @@ interface IRouter {
         bytes32 s
     ) external returns (uint256 amountToken, uint256 amountETH);
 
-    function swapExactTokensForTokens(
+    function swapExactTFT(
         uint256 amtIn,
         uint256 amtOutMin,
         address[] calldata path,
@@ -83,7 +83,7 @@ interface IRouter {
         uint256 deadline
     ) external returns (uint256[] memory amounts);
 
-    function swapTokensForExactTokens(
+    function swapTokensFET(
         uint256 amtOut,
         uint256 amtInMax,
         address[] calldata path,
@@ -91,14 +91,14 @@ interface IRouter {
         uint256 deadline
     ) external returns (uint256[] memory amounts);
 
-    function swapExactETHForTokens(
+    function swapExactETHFT(
         uint256 amtOutMin,
         address[] calldata path,
         address to,
         uint256 deadline
     ) external payable returns (uint256[] memory amounts);
 
-    function swapTokensForExactETH(
+    function swapTokensforEETH(
         uint256 amtOut,
         uint256 amtInMax,
         address[] calldata path,
@@ -114,7 +114,7 @@ interface IRouter {
         uint256 deadline
     ) external returns (uint256[] memory amounts);
 
-    function swapETHForExactTokens(
+    function swapETHforET(
         uint256 amtOut,
         address[] calldata path,
         address to,
