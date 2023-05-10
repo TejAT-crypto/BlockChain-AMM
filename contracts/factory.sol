@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "./DExPair.sol";
 import "../interfaces/IFactory.sol";
 
-contract Factory is IFactory {
+abstract contract Factory is IFactory {
     error SameAddresses();
     error PairExist();
     error ZeroAddress();

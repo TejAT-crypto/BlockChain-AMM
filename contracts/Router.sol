@@ -45,7 +45,7 @@ contract Router is IRouter {
         uint256 amtBmin
     ) private returns (uint256 amtA, uint256 amtB) {
         if (IFactory(factory).getPair(tokenA, tokenB) == address(0)) {
-            IFactory(factory).createPair(tokenA, tokenB);
+            IFactory(factory).createPairs(tokenA, tokenB);
         }
         (uint256 reserveA, uint256 reserveB) = Library.getReserves(
             factory,
@@ -129,7 +129,7 @@ contract Router is IRouter {
         assert(IWETH(WETH).transfer(pair, amtETH));
         liq = IPair(pair).mint(to);
         if (msg.value > amtETH)
-            Library.safeTransferETH(msg.sender, msg.value - amtETH);
+            Library.SafeTransferEth(msg.sender, msg.value - amtETH);
     }
 
     function removeLiquidity(
@@ -159,7 +159,7 @@ contract Router is IRouter {
         uint256 amtETHmin,
         address to,
         uint256 deadline
-    ) external ensure(deadline) returns (uint256 amtToken, uint256 amtETH) {
+    ) public ensure(deadline) returns (uint256 amtToken, uint256 amtETH) {
         (amtToken, amtETH) = removeLiquidity(
             token,
             WETH,
@@ -171,7 +171,7 @@ contract Router is IRouter {
         );
         IERC20(token).safeTransfer(to, amtToken);
         IWETH(WETH).withdraw(amtETH);
-        Library.safeTransferETH(to, amtETH);
+        Library.SafeTransferEth(to, amtETH);
     }
 
     function removeLiquiditywpermit(
@@ -189,7 +189,7 @@ contract Router is IRouter {
     ) external returns (uint256 amtA, uint256 amtB) {
         address pair = Library.pairFor(factory, tokenA, tokenB);
         uint256 value = appMax ? type(uint256).max : liq;
-        IERC20(pair).permit(
+        IDERC20(pair).permit(
             msg.sender,
             address(this),
             value,
@@ -224,7 +224,7 @@ contract Router is IRouter {
     ) external returns (uint256 amtToken, uint256 amtETH) {
         address pair = Library.pairFor(factory, token, WETH);
         uint256 value = appMax ? type(uint256).max : liq;
-        IERC20(pair).permit(
+        IDERC20(pair).permit(
             msg.sender,
             address(this),
             value,
@@ -348,7 +348,7 @@ contract Router is IRouter {
         );
         swapGen(amounts, path, address(this));
         IWETH(WETH).withdraw(amounts[amounts.length - 1]);
-        Library.safeTransferETH(to, amounts[amounts.length - 1]);
+        Library.SafeTransferEth(to, amounts[amounts.length - 1]);
     }
 
     function swapExactTokensForETH(
@@ -374,7 +374,7 @@ contract Router is IRouter {
         );
         swapGen(amounts, path, address(this));
         IWETH(WETH).withdraw(amounts[amounts.length - 1]);
-        Library.safeTransferETH(to, amounts[amounts.length - 1]);
+        Library.SafeTransferEth(to, amounts[amounts.length - 1]);
     }
 
     function swapETHforET(
@@ -397,7 +397,7 @@ contract Router is IRouter {
         );
         swapGen(amounts, path, to);
         if (msg.value > amounts[0])
-            Library.safeTransferETH(msg.sender, msg.value - amounts[0]);
+            Library.SafeTransferEth(msg.sender, msg.value - amounts[0]);
     }
 
     function quote(

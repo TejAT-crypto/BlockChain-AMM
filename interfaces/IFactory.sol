@@ -14,6 +14,11 @@ interface IFactory {
         address tokenB
     ) external returns (address pair);
 
+    function getPair(address tokenA, address tokenB)
+        external
+        view
+        returns (address pair);
+
     function allPairLength() external view returns (uint256);
 
     function feesTo() external view returns (address);
