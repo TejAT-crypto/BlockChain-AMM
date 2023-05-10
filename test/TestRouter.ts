@@ -11,7 +11,7 @@ import {
   toWei,
 } from "../test/univ";
 import { BigNumberish } from "ethers";
-import { MockERC20, DExPair } from "../../typechain-types";
+import { MERC20, DExPair } from "contracts";
 
 describe("Router", () => {
   const deployFixture = async () => {
