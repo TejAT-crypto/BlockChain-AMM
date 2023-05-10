@@ -1,14 +1,14 @@
 import { ethers } from "hardhat";
 import { loadFixture, mine } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
-import { toWei, AddressOne, AddressZero, bigNumberify } from "../utils/shared";
+import { toWei, AddressOne, AddressZero, bigNumberify } from "../test/univ";
 import {
   MINIMUM_LIQUIDITY,
   getCreate2Address,
   sortTokens,
   encodePrice,
   getAmount,
-} from "../utils/shared";
+} from "../test/univ";
 import { MockERC20__factory } from "../../typechain-types/factories/contracts/test/MockERC20__factory";
 import { BigNumberish } from "ethers";
 
