@@ -155,8 +155,9 @@ contract Router is IRouter {
 
     function removeLiquidityETH(
         address token,
-        address liq,
-        address amtTokenmin,
+        uint256 liq,
+        uint256 amtTokenmin,
+        uint256 amtETHmin,
         address to,
         uint256 deadline
     ) external ensure(deadline) returns (uint256 amtToken, uint256 amtETH) {
