@@ -2,9 +2,16 @@
 pragma solidity ^0.8.0;
 
 import "./DExPair.sol";
-import "../interfaces/IFactory.sol";
+import "../interfaces/IPair.sol";
 
-abstract contract Factory is IFactory {
+contract Factory {
+    event CreatedPair(
+        address indexed token_A,
+        address indexed token_B,
+        address pair,
+        uint256
+    );
+
     error SameAddresses();
     error PairExist();
     error ZeroAddress();
@@ -46,13 +53,11 @@ abstract contract Factory is IFactory {
         if (newPairs[token_A][token_B] != address(0)) {
             revert PairExist();
         }
-        //bytes memory ByteCode = type(DExPair).creationCode;
-        bytes32 salt = keccak256(abi.encodePacked(token_A, token_B));
-        // assembly{
-        //     pair := create2(0, add(ByteCode, 32), mload(ByteCode), salt)
-        // }
-
-        pair = address(new DExPair{salt: salt}());
+        bytes memory bytecode = type(DExPair).creationCode;
+        bytes32 salt = keccak256(abi.encodePacked(tokenA, tokenB));
+        assembly {
+            pair := create2(0, add(bytecode, 32), mload(bytecode), salt)
+        }
 
         IPair(pair).init(token_A, token_B);
 
@@ -75,5 +80,12 @@ abstract contract Factory is IFactory {
             revert IsForbidden(msg.sender, feesToSetter);
         }
         feesToSetter = _feesToSetter;
+    }
+
+    function getPair(
+        address tokenA,
+        address tokenB
+    ) public view returns (address) {
+        return newPairs[tokenA][tokenB];
     }
 }

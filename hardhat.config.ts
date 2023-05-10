@@ -1,11 +1,28 @@
-import "@nomicfoundation/hardhat-toolbox";
-import "@typechain/hardhat";
-import "@nomiclabs/hardhat-ethers";
-import "@nomicfoundation/hardhat-chai-matchers";
 import { HardhatUserConfig } from "hardhat/config";
+import "@nomicfoundation/hardhat-toolbox";
+import "hardhat-gas-reporter";
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.17",
+  gasReporter: {
+    enabled: false,
+  },
+  solidity: {
+    compilers: [
+      {
+        version: "0.8.17",
+        settings: {
+          viaIR: true,
+          optimizer: {
+            enabled: true,
+            runs: 1000000,
+          },
+        },
+      },
+      {
+        version: "0.6.6",
+      },
+    ],
+  },
 };
 
 export default config;

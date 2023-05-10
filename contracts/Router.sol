@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "../node_modules/@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "../interfaces/IFactory.sol";
+import "../contracts/Factory.sol";
 import "../interfaces/IDERC20.sol";
 import "../contracts/Library.sol";
 import "../interfaces/IRouter.sol";
@@ -97,8 +97,8 @@ contract Router is IRouter {
             amtBmin
         );
         address pair = Library.pairFor(factory, tokenA, tokenB);
-        ERC20(tokenA).transferFrom(msg.sender, pair, amtA);
-        ERC20(tokenB).transferFrom(msg.sender, pair, amtB);
+        IERC20(tokenA).safeTransferFrom(msg.sender, pair, amtA);
+        IERC20(tokenB).safeTransferFrom(msg.sender, pair, amtB);
         liq = IPair(pair).mint(to);
     }
 
@@ -231,7 +231,8 @@ contract Router is IRouter {
             deadline,
             v,
             r,
-            s);
+            s
+        );
         (amtToken, amtETH) = removeLiquidityETH(
             token,
             liq,
