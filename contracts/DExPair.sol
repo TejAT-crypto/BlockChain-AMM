@@ -235,7 +235,7 @@ contract DExPair is DexERC20, IPair {
     ) private returns (bool isFee) {
         address feeTo = IFactory(factory).feesTo();
         isFee = feeTo != address(0);
-        uint256 product = prod; // gas savings
+        uint256 product = prod;
         if (isFee) {
             if (product != 0) {
                 uint256 rootK = Math.sqrt(uint256(reserveA_) * (reserveB_));
