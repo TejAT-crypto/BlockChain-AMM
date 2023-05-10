@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import "../node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "../node_modules/@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "../interfaces/IFactory.sol";
 import "../interfaces/IDERC20.sol";
 import "../contracts/Library.sol";
@@ -155,9 +154,8 @@ contract Router is IRouter {
 
     function removeLiquidityETH(
         address token,
-        uint256 liq,
-        uint256 amtTokenmin,
-        uint256 amtETHmin,
+        address liq,
+        address amtTokenmin,
         address to,
         uint256 deadline
     ) external ensure(deadline) returns (uint256 amtToken, uint256 amtETH) {
@@ -175,7 +173,7 @@ contract Router is IRouter {
         Library.safeTransferETH(to, amtETH);
     }
 
-    function removeLiquidity_permit(
+    function removeLiquiditywpermit(
         address tokenA,
         address tokenB,
         uint256 liq,
@@ -211,7 +209,7 @@ contract Router is IRouter {
         );
     }
 
-    function removeLiquidityETH_permit(
+    function removeLiquidityETHwpermit(
         address token,
         uint256 liq,
         uint256 amtTokenmin,
@@ -289,7 +287,7 @@ contract Router is IRouter {
         swapGen(amounts, path, to);
     }
 
-    function swapTokensFET(
+    function swapTokensForET(
         uint256 amtOut,
         uint256 amtInmax,
         address[] calldata path,
@@ -307,7 +305,7 @@ contract Router is IRouter {
         swapGen(amounts, path, to);
     }
 
-    function swapExactETHFT(
+    function swapEETHfortokens(
         uint256 amtOutmin,
         address[] calldata path,
         address to,
@@ -349,6 +347,32 @@ contract Router is IRouter {
             amounts[0]
         );
         swapGen(amounts, path, address(this));
+        IWETH(WETH).withdraw(amounts[amounts.length - 1]);
+        Library.safeTransferETH(to, amounts[amounts.length - 1]);
+    }
+
+    function swapETokensForETH(
+        uint256 amtIn,
+        uint256 amtOutmin,
+        address[] calldata path,
+        address to,
+        uint256 deadline
+    ) external override ensure(deadline) returns (uint256[] memory amounts) {
+        if (path[path.length - 1] != WETH)
+            revert RouterInvalidPath(path[path.length - 1], WETH);
+        amounts = Library.getAmountsOut(factory, amtIn, path);
+        if (amounts[amounts.length - 1] < amountOutMin)
+            revert InsufficientOutputAmount(
+                amounts[amounts.length - 1],
+                amtOutmin
+            );
+
+        IERC20(path[0]).safeTransferFrom(
+            msg.sender,
+            Library.pairFor(factory, path[0], path[1]),
+            amounts[0]
+        );
+        _swap(amounts, path, address(this));
         IWETH(WETH).withdraw(amounts[amounts.length - 1]);
         Library.safeTransferETH(to, amounts[amounts.length - 1]);
     }
