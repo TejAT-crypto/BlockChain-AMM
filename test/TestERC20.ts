@@ -4,7 +4,7 @@ import { ethers } from "hardhat";
 import { ecsign } from "@ethereumjs/util";
 import { toWei, bigNumberify } from "../test/univ";
 import { getApprovalDigest } from "../test/univ";
-import { MockERC20__factory } from "../../typechain-types/factories/contracts/test";
+import { MERC20__factory } from "../../typechain-types/factories/contracts/test";
 const { defaultAbiCoder, keccak256, toUtf8Bytes, hexlify } = ethers.utils;
 const { MaxUint256 } = ethers.constants;
 
@@ -14,10 +14,10 @@ const TEST_AMOUNT = toWei(10);
 describe("DexERC20", () => {
   const deployTokenFixture = async () => {
     const [owner, other] = await ethers.getSigners();
-    const MockERC20 = (await ethers.getContractFactory(
-      "MockERC20"
-    )) as MockERC20__factory;
-    const token = await MockERC20.deploy(TOTAL_SUPPLY);
+    const MERC20 = (await ethers.getContractFactory(
+      "MERC20"
+    )) as MERC20__factory;
+    const token = await MERC20.deploy(TOTAL_SUPPLY);
     const chainId = ethers.provider.network.chainId;
     return { token, chainId, owner, other };
   };
@@ -25,8 +25,8 @@ describe("DexERC20", () => {
   it("name, symbol, decimals, totalSupply, balanceOf, DOMAIN_SEPARATOR, PERMIT_TYPEHASH", async () => {
     const { token, owner, chainId } = await loadFixture(deployTokenFixture);
     const name = await token.name();
-    expect(name).to.eq("Uniswap V2");
-    expect(await token.symbol()).to.eq("UNI-V2");
+    expect(name).to.eq("DEx");
+    expect(await token.symbol()).to.eq("DEX");
     expect(await token.decimals()).to.eq(18);
     expect(await token.totalSupply()).to.eq(TOTAL_SUPPLY);
     expect(await token.balanceOf(owner.address)).to.eq(TOTAL_SUPPLY);

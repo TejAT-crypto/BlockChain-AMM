@@ -9,7 +9,7 @@ import {
   encodePrice,
   getAmount,
 } from "../test/univ";
-import { MockERC20__factory } from "../../typechain-types/factories/contracts/test/MockERC20__factory";
+import { MERC20__factory } from "../../typechain-types/factories/contracts/test/MERC20__factory";
 import { BigNumberish } from "ethers";
 
 describe("DExPair", () => {
@@ -18,8 +18,8 @@ describe("DExPair", () => {
     const Factory = await ethers.getContractFactory("Factory");
     const DExPair = await ethers.getContractFactory("DExPair");
     const ERC20 = (await ethers.getContractFactory(
-      "MockERC20"
-    )) as MockERC20__factory;
+      "MERC20"
+    )) as MERC20__factory;
     const factory = await Factory.deploy(owner.address);
     let token0 = await ERC20.deploy("Token A", "TKNA");
     let token1 = await ERC20.deploy("Token B", "TKNB");

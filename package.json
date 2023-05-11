@@ -1,7 +1,7 @@
 {
   "name": "blockchain-amm",
   "version": "1.0.0",
-  "description": "This repository consists of 3 steps:\r 1. Replicating the V2 of UniSWAP\r 2. Replicating the V3 of UniSWAP\r 3. Introducing the native currency using ERC20 Tokens instead of ERC721 Tokens foe any transaction.",
+  "description": "BlockChain project for Decentralised Exchange",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
