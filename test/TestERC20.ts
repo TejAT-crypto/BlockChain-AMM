@@ -4,7 +4,7 @@ import { ethers } from "hardhat";
 import { ecsign } from "@ethereumjs/util";
 import { toWei, bigNumberify } from "../test/univ";
 import { getApprovalDigest } from "../test/univ";
-import { MERC20__factory } from "../../typechain-types/factories/contracts/test";
+import { TempERC20__factory } from "../../typechain-types/factories/contracts/test";
 const { defaultAbiCoder, keccak256, toUtf8Bytes, hexlify } = ethers.utils;
 const { MaxUint256 } = ethers.constants;
 
@@ -16,7 +16,7 @@ describe("DexERC20", () => {
     const [owner, other] = await ethers.getSigners();
     const TempERC20 = (await ethers.getContractFactory(
       "TempERC20"
-    )) as MERC20__factory;
+    )) as TempERC20__factory;
     const token = await TempERC20.deploy(TOTAL_SUPPLY);
     const chainId = ethers.provider.network.chainId;
     return { token, chainId, owner, other };

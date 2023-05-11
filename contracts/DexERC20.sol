@@ -22,7 +22,7 @@ contract DexERC20 is IDERC20, ERC20 {
                 keccak256(
                     "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
                 ),
-                keccak256(bytes("DEX")),
+                keccak256(bytes("DEx")),
                 keccak256(bytes("1")),
                 chainId,
                 address(this)
