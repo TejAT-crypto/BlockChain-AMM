@@ -44,8 +44,8 @@ contract Router is IRouter {
         uint256 amtAmin,
         uint256 amtBmin
     ) private returns (uint256 amtA, uint256 amtB) {
-        if (IFactory(factory).getPair(tokenA, tokenB) == address(0)) {
-            IFactory(factory).createPairs(tokenA, tokenB);
+        if (Factory(factory).getPair(tokenA, tokenB) == address(0)) {
+            Factory(factory).createPairs(tokenA, tokenB);
         }
         (uint256 reserveA, uint256 reserveB) = Library.getReserves(
             factory,
