@@ -70,8 +70,8 @@ describe("DExPair", () => {
       .to.emit(pair, "Mint")
       .withArgs(owner.address, token0Amount, token1Amount);
 
-    expect(await pair.token0()).to.eq(token0.address);
-    expect(await pair.token1()).to.eq(token1.address);
+    expect(await pair.tokenA()).to.eq(token0.address);
+    expect(await pair.tokenB()).to.eq(token1.address);
     expect(await pair.totalSupply()).to.eq(expectedLiquidity);
     expect(await pair.balanceOf(owner.address)).to.eq(
       expectedLiquidity.sub(MINIMUM_LIQUIDITY)
@@ -354,7 +354,7 @@ describe("DExPair", () => {
     const { pair, factory, other, token0, token1, owner } = await loadFixture(
       deployFixture
     );
-    await factory.setFeesTo(other.address);
+    await factory._setFeesTo(other.address);
     const token0Amount = toWei(1000);
     const token1Amount = toWei(1000);
     await token0.transfer(pair.address, token0Amount);
