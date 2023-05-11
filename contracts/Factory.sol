@@ -20,7 +20,7 @@ contract Factory {
     address public feesTo;
     address public feesToSetter;
 
-    mapping(address => mapping(address => address)) public getPair;
+    mapping(address => mapping(address => address)) public pair_address;
     address[] public allPair;
 
     constructor(address feeToSetter) {
@@ -43,7 +43,7 @@ contract Factory {
 
         if (token0 == address(0)) revert ZeroAddress();
 
-        if (getPair[token0][token1] != address(0)) revert PairExist();
+        if (pair_address[token0][token1] != address(0)) revert PairExist();
 
         bytes32 salt = keccak256(abi.encodePacked(token0, token1));
         
@@ -51,8 +51,8 @@ contract Factory {
 
         IPair(pair).init(token0, token1);
 
-        getPair[token0][token1] = pair;
-        getPair[token1][token0] = pair;
+        pair_address[token0][token1] = pair;
+        pair_address[token1][token0] = pair;
         allPair.push(pair);
 
         emit CreatedPair(token0, token1, pair, allPair.length);
@@ -72,10 +72,10 @@ contract Factory {
         feesToSetter = _feesToSetter;
     }
 
-    // function getPair(
-    //     address tokenA,
-    //     address tokenB
-    // ) public view returns (address) {
-    //     return newPairs[tokenA][tokenB];
-    // }
+    function getPair(
+        address tokenA,
+        address tokenB
+    ) public view returns (address) {
+        return pair_address[tokenA][tokenB];
+    }
 }
