@@ -20,7 +20,7 @@ contract Factory {
     address public feesTo;
     address public feesToSetter;
 
-    mapping(address => mapping(address => address)) public newPairs;
+    mapping(address => mapping(address => address)) public getPair;
     address[] public allPair;
 
     constructor(address feeToSetter) {
@@ -31,41 +31,31 @@ contract Factory {
         return allPair.length;
     }
 
-    function createPairs(
-        address tokenA,
-        address tokenB
-    ) external returns (address pair) {
-        if (tokenA == tokenB) {
-            revert SameAddresses();
-        }
-        address token_A;
-        address token_B;
-        if (tokenA < tokenB) {
-            token_A = tokenA;
-            token_B = tokenB;
-        } else {
-            token_A = tokenB;
-            token_B = tokenA;
-        }
-        if (token_A == address(0)) {
-            revert ZeroAddress();
-        }
-        if (newPairs[token_A][token_B] != address(0)) {
-            revert PairExist();
-        }
-        bytes memory bytecode = type(DExPair).creationCode;
-        bytes32 salt = keccak256(abi.encodePacked(tokenA, tokenB));
-        assembly {
-            pair := create2(0, add(bytecode, 32), mload(bytecode), salt)
-        }
+    function createPairs(address tokenA, address tokenB)
+        external
+        returns (address pair)
+    {
+        if (tokenA == tokenB) revert SameAddresses();
 
-        IPair(pair).init(token_A, token_B);
+        (address token0, address token1) = tokenA < tokenB
+            ? (tokenA, tokenB)
+            : (tokenB, tokenA);
 
-        newPairs[token_A][token_B] = pair;
-        newPairs[token_B][token_A] = pair;
+        if (token0 == address(0)) revert ZeroAddress();
+
+        if (getPair[token0][token1] != address(0)) revert PairExist();
+
+        bytes32 salt = keccak256(abi.encodePacked(token0, token1));
+        
+        pair = address(new DExPair{salt: salt}());
+
+        IPair(pair).init(token0, token1);
+
+        getPair[token0][token1] = pair;
+        getPair[token1][token0] = pair;
         allPair.push(pair);
 
-        emit CreatedPair(token_A, token_B, pair, allPair.length);
+        emit CreatedPair(token0, token1, pair, allPair.length);
     }
 
     function _setFeesTo(address _feesTo) external {
@@ -82,10 +72,10 @@ contract Factory {
         feesToSetter = _feesToSetter;
     }
 
-    function getPair(
-        address tokenA,
-        address tokenB
-    ) public view returns (address) {
-        return newPairs[tokenA][tokenB];
-    }
+    // function getPair(
+    //     address tokenA,
+    //     address tokenB
+    // ) public view returns (address) {
+    //     return newPairs[tokenA][tokenB];
+    // }
 }
