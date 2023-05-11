@@ -20,9 +20,15 @@ describe("Router", () => {
     const DExPair = await ethers.getContractFactory("DExPair");
     const ERC20 = await ethers.getContractFactory("MERC20");
     const WETH = await ethers.getContractFactory("WETH9");
-    const Library = await ethers.getContractFactory("Library");
-    const library = await Library.deploy();
-    const Router = await ethers.getContractFactory("Router");
+    const Lib = await ethers.getContractFactory("Library");
+    const lib = await Lib.deploy();
+    await lib.deployed();
+    const Router = await ethers.getContractFactory("Router", {
+      signer: owner,
+      libraries: {
+        Library: lib.address,
+      },
+    });
     const Factory = await factory.deploy(owner.address);
     const weth = await WETH.deploy();
     const RouterTest = await Router.deploy(Factory.address, weth.address);

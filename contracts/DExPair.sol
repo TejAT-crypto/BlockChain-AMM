@@ -1,8 +1,8 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
-import "../library/Math.sol";
-import "../library/float.sol";
+import "../libraries/Math.sol";
+import "../libraries/float.sol";
 import "../interfaces/ITrade.sol";
 import "../contracts/Factory.sol";
 import "../interfaces/IPair.sol";
