@@ -6,6 +6,7 @@ const config: HardhatUserConfig = {
   gasReporter: {
     enabled: false,
   },
+
   solidity: {
     compilers: [
       {

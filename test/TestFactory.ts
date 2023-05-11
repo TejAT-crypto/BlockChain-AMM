@@ -37,9 +37,6 @@ describe("Factory", () => {
     await expect(
       factory.createPairs(...tokensReversed)
     ).to.be.revertedWithCustomError(factory, "PairExist");
-    // expect(await factory.getPair(...tokens)).to.eq(create2Address);
-    // expect(await factory.getPair(...tokensReversed)).to.eq(create2Address);
-    //expect(await factory.allPairs(0)).to.eq(create2Address);
     expect(await factory.allPairLength()).to.eq(1);
 
     const pair = DExPair.attach(create2Address);
