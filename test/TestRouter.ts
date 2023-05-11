@@ -61,7 +61,7 @@ describe("Router", () => {
 
   it("Factory, WETH", async () => {
     const { Factory, weth, RouterTest } = await loadFixture(deployFixture);
-    expect(await RouterTest.Factory()).to.equal(Factory.address);
+    expect(await RouterTest.factory()).to.equal(Factory.address);
     expect(await RouterTest.WETH()).to.equal(weth.address);
   });
 
@@ -122,7 +122,7 @@ describe("Router", () => {
     const WETHPartnerAmount = toWei(1);
     const ETHAmount = toWei(4);
     const expectedLiquidity = toWei(2);
-    const wethPairToken0 = await wethPair.token0();
+    const wethPairToken0 = await wethPair.tokenA();
     await wethPartner.approve(router.address, MaxUint256);
     await expect(
       router.addLiquidityETH(
@@ -163,8 +163,8 @@ describe("Router", () => {
     token0Amount: BigNumberish,
     token1Amount: BigNumberish,
     pair: DExPair,
-    token0: MockERC20,
-    token1: MockERC20,
+    token0: MERC20,
+    token1: MERC20,
     to: string
   ) => {
     await token0.transfer(pair.address, token0Amount);
