@@ -14,10 +14,10 @@ const TEST_AMOUNT = toWei(10);
 describe("DexERC20", () => {
   const deployTokenFixture = async () => {
     const [owner, other] = await ethers.getSigners();
-    const MERC20 = (await ethers.getContractFactory(
-      "MERC20"
+    const TempERC20 = (await ethers.getContractFactory(
+      "TempERC20"
     )) as MERC20__factory;
-    const token = await MERC20.deploy(TOTAL_SUPPLY);
+    const token = await TempERC20.deploy(TOTAL_SUPPLY);
     const chainId = ethers.provider.network.chainId;
     return { token, chainId, owner, other };
   };
