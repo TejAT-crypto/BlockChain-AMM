@@ -12,6 +12,8 @@
 
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+// SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.10;
 
 contract WETH9 {
@@ -63,7 +65,7 @@ contract WETH9 {
     ) public returns (bool) {
         require(balanceOf[src] >= wad, "");
 
-        if (src != msg.sender && allowance[src][msg.sender] != uint256(-1)) {
+        if (src != msg.sender && allowance[src][msg.sender] != type(uint256).max) {
             require(allowance[src][msg.sender] >= wad, "");
             allowance[src][msg.sender] -= wad;
         }
