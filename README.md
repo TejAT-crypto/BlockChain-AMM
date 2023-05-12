@@ -1,7 +1,5 @@
 # BlockChain-AMM
-
-This repository consists of 3 steps:
+The project for the course on Introduction to Blockchain is based on :
 
 1. Replicating the V2 of UniSWAP
-2. Replicating the V3 of UniSWAP
-3. Introducing fees for Uniswap.
+2. Including fees for UniswapV2.
