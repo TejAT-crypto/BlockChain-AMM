@@ -38,7 +38,6 @@ library Library {
         amountOut = (amountIn * reserveOut) / reserveIn;
     }
 
-    // returns sorted token addresses, used to handle return values from pairs sorted in this order
     function sortTokens(
         address tokenA,
         address tokenB

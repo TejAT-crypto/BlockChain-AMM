@@ -17,6 +17,7 @@ contract Factory {
     error ZeroAddress();
     error IsForbidden(address feesTo, address feesToSetter);
 
+    bytes32 public constant INIT_CODE_HASH = keccak256(abi.encodePacked(type(DExPair).creationCode));
     address public feesTo;
     address public feesToSetter;
 
