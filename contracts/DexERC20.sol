@@ -12,7 +12,7 @@ contract DexERC20 is IDERC20, ERC20 {
         0x6e71edae12b1b97f4d1f60370fef10105fa2faae0126114a169c64845d6126c9;
     mapping(address => uint256) public nonces;
 
-    constructor() ERC20("DEx", "DEX") {
+    constructor() ERC20("LPToken", "LPTKN") {
         uint256 chainId;
         assembly {
             chainId := chainid()
@@ -22,7 +22,7 @@ contract DexERC20 is IDERC20, ERC20 {
                 keccak256(
                     "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
                 ),
-                keccak256(bytes("DEx")),
+                keccak256(bytes("LPToken")),
                 keccak256(bytes("1")),
                 chainId,
                 address(this)
