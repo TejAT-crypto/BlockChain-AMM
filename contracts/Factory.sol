@@ -3,8 +3,9 @@ pragma solidity ^0.8.0;
 
 import "./DExPair.sol";
 import "../interfaces/IPair.sol";
+import "../interfaces/IFactory.sol";
 
-contract Factory {
+contract Factory is IFactory{
     event CreatedPair(
         address indexed token_A,
         address indexed token_B,
@@ -78,5 +79,9 @@ contract Factory {
         address tokenB
     ) public view returns (address) {
         return pair_address[tokenA][tokenB];
+    }
+
+    function fTo() external view returns(address){
+        return feesTo;
     }
 }

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "../node_modules/@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "../contracts/Factory.sol";
+import "../interfaces/IFactory.sol";
 import "../interfaces/IDERC20.sol";
 import "../libraries/Library.sol";
 import "../interfaces/IRouter.sol";
@@ -44,8 +44,8 @@ contract Router is IRouter {
         uint256 amtAmin,
         uint256 amtBmin
     ) private returns (uint256 amtA, uint256 amtB) {
-        if (Factory(factory).getPair(tokenA, tokenB) == address(0)) {
-            Factory(factory).createPairs(tokenA, tokenB);
+        if (IFactory(factory).getPair(tokenA, tokenB) == address(0)) {
+            IFactory(factory).createPairs(tokenA, tokenB);
         }
         (uint256 reserveA, uint256 reserveB) = Library.getReserves(
             factory,
