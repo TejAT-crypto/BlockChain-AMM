@@ -25,8 +25,8 @@ describe("DexERC20", () => {
   it("name, symbol, decimals, totalSupply, balanceOf, DOMAIN_SEPARATOR, PERMIT_TYPEHASH", async () => {
     const { token, owner, chainId } = await loadFixture(deployTokenFixture);
     const name = await token.name();
-    expect(name).to.eq("DEx");
-    expect(await token.symbol()).to.eq("DEX");
+    expect(name).to.eq("LPToken");
+    expect(await token.symbol()).to.eq("LPTKN");
     expect(await token.decimals()).to.eq(18);
     expect(await token.totalSupply()).to.eq(TOTAL_SUPPLY);
     expect(await token.balanceOf(owner.address)).to.eq(TOTAL_SUPPLY);

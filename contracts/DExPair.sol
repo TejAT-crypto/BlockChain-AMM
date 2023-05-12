@@ -4,7 +4,7 @@ pragma solidity ^0.8.10;
 import "../libraries/Math.sol";
 import "../libraries/float.sol";
 import "../interfaces/ITrade.sol";
-import "../interfaces/IFactory.sol";
+import "../contracts/Factory.sol";
 import "../interfaces/IPair.sol";
 import "../contracts/DexERC20.sol";
 import "../node_modules/@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -233,7 +233,7 @@ contract DExPair is DexERC20, IPair {
         uint112 reserveA_,
         uint112 reserveB_
     ) private returns (bool isFee) {
-        address feeTo = IFactory(factory).fTo();
+        address feeTo = Factory(factory).feesTo();
         isFee = feeTo != address(0);
         uint256 product = prod;
         if (isFee) {
